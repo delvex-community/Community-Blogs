@@ -44,7 +44,9 @@ Before moving forward, lets talk about these activites also known as ```State Ma
         8. Repeat step 5,6 & 7 for Subject of our mail, with variable as ```Subject``` and argument as ```out_Subject```.
         
        Don't forget to set the Direction of ```out_Message```,```out_Subject``` and ```out_dt_MailData``` as Out in Arguments Panel and thus we are all set with our Initial Settings and can move on to Get Transaction State.
-   
+   * After the above process, save the ```InitAllApplications.xaml``` file and move back to position from where you opened it.
+   * An ```Import Arguments``` button would seem to be highlighted with ```orange color```, Click on it and create variables for each empty entry with similar name (using ctrl + k) such as ```Message```, ```MailData```, ```Subject``` and click on ```Ok```.
+   * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
     
     
   
