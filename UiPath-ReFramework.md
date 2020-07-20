@@ -30,7 +30,7 @@ Before moving forward, lets talk about these activites also known as ```State Ma
 * Any Process consists of majorly 4 states:
   1. Initialization ~> The state at which we initialize all the applications required in the process, or fetch the data need to be processed on.
       * Init State (InitAllSettings.xaml) ~> An Config File is loaded into our Framework (as Config Dictionary Variable ```String:Object```), which is just an excel file which contains informationn related to logging status/File or Folder Path/Url/Credentials/Assets etc.. things which can be changed
-  <img src="Images/InitAllSettings.jpg" />
+  <img src="Images/InitAllSetting.jpg" />
   
    * Since we are not using ```Orchestrator``` we can just use ```comment out``` activity to disable ```Orchestrator``` activity and ```kill all process```
       * <u>InitAllApplications</u> ~> This workflow is utilized to add activities that are to be executed only once for the process, to work. In our process,
@@ -48,5 +48,7 @@ Before moving forward, lets talk about these activites also known as ```State Ma
    * An ```Import Arguments``` button would seem to be highlighted with ```orange color```, Click on it and create variables for each empty entry with similar name (using ctrl + k) such as ```Message```, ```MailData```, ```Subject``` and click on ```Ok```.
    * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
     
-    
-  
+  2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
+   <img src="ExcelData.png" />
+   
+   * 
