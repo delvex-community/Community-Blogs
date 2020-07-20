@@ -49,6 +49,6 @@ Before moving forward, lets talk about these activites also known as ```State Ma
    * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
     
   2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
-   <img src="ExcelData.png" />
+   <img src="Images/ExcelData.png" />
    
    * 
