@@ -35,7 +35,7 @@ Before moving forward, lets talk about these activites also known as ```State Ma
   3. Process
   4. Exit
 1. Initialization ~> The state at which we initialize all the applications required in the process, or fetch the data need to be processed on.
-  * Init State (InitAllSettings.xaml) ~> An Config File is loaded into our Framework (as Config Dictionary Variable ```String:Object```), which is just an excel file which contains informationn related to logging status/File or Folder Path/Url/Credentials/Assets etc.. things which can be changed
+  * Init State (InitAllSettings.xaml) ~> An Config File is loaded into our Framework (as Config Dictionary Variable ```String:Object``` ), which is just an excel file which contains information related to logging status/File or Folder Path/Url/Credentials/Assets etc.. things which can be changed
   <img src="Images/InitAllSetting.jpg" />
   
   * Since we are not using ```Orchestrator``` we can just use ```comment out``` activity to disable ```Orchestrator``` activity and ```kill all process```
@@ -51,8 +51,11 @@ Before moving forward, lets talk about these activites also known as ```State Ma
 Don't forget to set the Direction of ```out_Message```,```out_Subject``` and ```out_dt_MailData``` as Out in Arguments Panel and thus we are all set with our Initial Settings and can move on to Get Transaction State.
   * After the above process, save the ```InitAllApplications.xaml``` file and move back to position from where you opened it.
   * An ```Import Arguments``` button would seem to be highlighted with ```orange color```, Click on it and create variables for each empty entry with similar name (using ctrl + k) such as ```Message```, ```MailData```, ```Subject``` and click on ```Ok```.
+  
+  <img src="Images/InitAllApplications.jpg" />
+  
   * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
-<br>
+
 2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
   </br>
    <img src="Images/ExcelData.png" />
@@ -88,3 +91,4 @@ Don't forget to set the Direction of ```out_Message```,```out_Subject``` and ```
         </ul><br>
    <img src="Images/TransactionField.png" />
  
+  And Now we are also complete with Get Transaction State machine and thus time to move forward with ```Process Transaction State Machine```
