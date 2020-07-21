@@ -51,4 +51,22 @@ Before moving forward, lets talk about these activites also known as ```State Ma
   2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
    <img src="Images/ExcelData.png" />
    
-   * 
+   * To Get Started, Double click on ```Get Transaction Data``` State Machine and followed by Click on ```Open Workflow``` in ```Invoke GetTransactionData workflow```
+   <img src="Images/Get Transaction Data.png" />
+   
+   * While working try to read the Annotations given at top of the activities, they give a brief description about the activities being used
+   * Now back to process, since we are not using Orchestrator so we won't be in need of ```Get Transaction Item``` activity
+    1. Drag an ```If``` activity and set condition as ```in_TransactionNumber < io_TransactionData.Rows.Count```
+        * Here in_TransactionNumber defines the index number of row and will loop until rows are left unprocessed
+    2. Drag an ```Assign``` activity inside the ```Then``` section and set To: ```out_TransactionItem``` , Value: ```io_TransactionData(in_TransactionNumber)``` with data type of ```out_TransactionItem``` as ```System.Data.DataRow```
+    3. Drag 3 ```Assign``` activities inside the ```Else``` section and set them as
+      * To: out_TransactionItem  ; Value: Nothing
+      * To: out_TransactionField1 ; Value: ""
+      * To: out_TransactionField2 ; Value: ""
+      (These activites will result to show end of process when transaction number will be equal or more than no of rows in excel)
+    <img src="Images/TransactionItem.png" \>
+    4. In the activity below it, set arguments to store the Name of person and email id at each iteration of row
+      * To: out_TransactionField1 ; Value: out_TransactionItem("Name").ToString
+      * To: out_TransactionField2 ; Value: out_TransactionItem("Email").ToString
+      * out_TransactionID is used for logging purpose so keep it as it is thus no change 
+    <img src="Images/TransactionField.png" \>
