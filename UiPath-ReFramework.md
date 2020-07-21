@@ -20,12 +20,14 @@ Now without wasting any time, lets start with a UseCase and implement our own Bo
 
 <b><u>Idea</u></b> : Send Customized Bulk Mails to Peoples while fetching data from Excel File
 
+## Process :
+
 1. To Begin with, Open ```UiPath``` and Click on ```Robotic Enterprise Framework``` in the ```New From Template``` section
 2. Give a name to the Process ( up to you ) like ```Bulk mailing using ReFramework``` and a suitable Description can be added as for the ```Best Practices``` if we talk about
 
 ... In few moments a pre-build template structure will be visible on screen with activities ( called State Machine ) like this <img src="Images/Re-Framework.jpg" />
 
-Before moving forward, lets talk about these activites also known as ```State Machine```
+Before moving forward, lets talk about these activites also known as ```State Machine``` <br>
 * <b>State Machine</b> ~> A state machine is a type of automation that uses a finite number of states in its execution and an important aspect of state machines are transitions, as they also enable you to add conditions based on which to jump from one state to another. These are represented by arrows or branches between states.
 * Any Process consists of majorly 4 states:
   1. Initialization ~> The state at which we initialize all the applications required in the process, or fetch the data need to be processed on.
@@ -49,24 +51,35 @@ Before moving forward, lets talk about these activites also known as ```State Ma
    * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
     
   2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
+  </br>
    <img src="Images/ExcelData.png" />
-   
-   * To Get Started, Double click on ```Get Transaction Data``` State Machine and followed by Click on ```Open Workflow``` in ```Invoke GetTransactionData workflow```
+  </br><ul>
+  <li>To Get Started, Double click on ```Get Transaction Data``` State Machine and followed by Click on ```Open Workflow``` in ```Invoke GetTransactionData workflow```</li>
+ </br>
    <img src="Images/Get Transaction Data.png" />
-   
-   * While working try to read the Annotations given at top of the activities, they give a brief description about the activities being used
-   * Now back to process, since we are not using Orchestrator so we won't be in need of ```Get Transaction Item``` activity
-    1. Drag an ```If``` activity and set condition as ```in_TransactionNumber < io_TransactionData.Rows.Count```
-        * Here in_TransactionNumber defines the index number of row and will loop until rows are left unprocessed
-    2. Drag an ```Assign``` activity inside the ```Then``` section and set To: ```out_TransactionItem``` , Value: ```io_TransactionData(in_TransactionNumber)``` with data type of ```out_TransactionItem``` as ```System.Data.DataRow```
-    3. Drag 3 ```Assign``` activities inside the ```Else``` section and set them as
-      * To: out_TransactionItem  ; Value: Nothing
-      * To: out_TransactionField1 ; Value: ""
-      * To: out_TransactionField2 ; Value: ""
-      (These activites will result to show end of process when transaction number will be equal or more than no of rows in excel)
-    <img src="Images/TransactionItem.png" \>
-    4. In the activity below it, set arguments to store the Name of person and email id at each iteration of row
-      * To: out_TransactionField1 ; Value: out_TransactionItem("Name").ToString
-      * To: out_TransactionField2 ; Value: out_TransactionItem("Email").ToString
-      * out_TransactionID is used for logging purpose so keep it as it is thus no change 
+ </br>
+ <ul>
+<li>While working try to read the Annotations given at top of the activities, they give a brief description about the activities being used</li>
+<li>Now back to process, since we are not using Orchestrator so we won't be in need of ```Get Transaction Item``` activity</li>
+ </ul>
+ <ol>
+ <li>Drag an ```If``` activity and set condition as ```in_TransactionNumber < io_TransactionData.Rows.Count``` </br>
+       (Here in_TransactionNumber defines the index number of row and will loop until rows are left unprocessed)</li>
+ <li>Drag an ```Assign``` activity inside the ```Then``` section and set To: ```out_TransactionItem``` , Value: ```io_TransactionData(in_TransactionNumber)``` with data type of ```out_TransactionItem``` as ```System.Data.DataRow```</li>
+ <li>Drag 3 ```Assign``` activities inside the ```Else``` section and set them as
+  <ul>
+   <li>To: out_TransactionItem  ; Value: Nothing</li>
+   <li>To: out_TransactionField1 ; Value: ""</li>
+   <li>To: out_TransactionField2 ; Value: "" </li>
+  </ul>
+  (These activites will result to show end of process when transaction number will be equal or more than no of rows in excel)</li></br>
+    <img src="Images/TransactionItem.png" \></br>
+   <li>In the activity below it, set arguments to store the Name of person and email id at each iteration of row </br>
+ <ul>
+ <li>To: out_TransactionField1 ; Value: out_TransactionItem("Name").ToString</li>
+ <li>To: out_TransactionField2 ; Value: out_TransactionItem("Email").ToString</li>
+ <li>out_TransactionID is used for logging purpose so keep it as it is thus no change</li>
+ </ul></li>
+ </ol>
     <img src="Images/TransactionField.png" \>
+ 
