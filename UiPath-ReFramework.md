@@ -30,56 +30,61 @@ Now without wasting any time, lets start with a UseCase and implement our own Bo
 Before moving forward, lets talk about these activites also known as ```State Machine``` <br>
 * <b>State Machine</b> ~> A state machine is a type of automation that uses a finite number of states in its execution and an important aspect of state machines are transitions, as they also enable you to add conditions based on which to jump from one state to another. These are represented by arrows or branches between states.
 * Any Process consists of majorly 4 states:
-  1. Initialization ~> The state at which we initialize all the applications required in the process, or fetch the data need to be processed on.
-      * Init State (InitAllSettings.xaml) ~> An Config File is loaded into our Framework (as Config Dictionary Variable ```String:Object```), which is just an excel file which contains informationn related to logging status/File or Folder Path/Url/Credentials/Assets etc.. things which can be changed
+  1. Initialization
+  2. Get Transaction Data
+  3. Process
+  4. Exit
+1. Initialization ~> The state at which we initialize all the applications required in the process, or fetch the data need to be processed on.
+  * Init State (InitAllSettings.xaml) ~> An Config File is loaded into our Framework (as Config Dictionary Variable ```String:Object```), which is just an excel file which contains informationn related to logging status/File or Folder Path/Url/Credentials/Assets etc.. things which can be changed
   <img src="Images/InitAllSetting.jpg" />
   
-   * Since we are not using ```Orchestrator``` we can just use ```comment out``` activity to disable ```Orchestrator``` activity and ```kill all process```
-      * <u>InitAllApplications</u> ~> This workflow is utilized to add activities that are to be executed only once for the process, to work. In our process,
-        1. Drag an ```Message Box``` Activity with Text: ```"Select an Excel File"```
-        2. Drag an ```Select File``` activity and create its output variable in right panel using ```ctrl+k```, naming ```InputFile```.
-        3. Drag an ```read range``` activity (workbook) and set Workbook path as ```InputFile``` (press ctrl + spacebar) and create an output argument using ```ctrl +m``` and name it as ```out_dt_MailData``` also in the ```Arguments Panel``` set its Direction to ```Out```.
-        4. Set the Range of ```read range``` activity as ```""``` or blank.
-        5. Drag an ```Message Box``` activity again with text: ```Select an Message.txt file``` ( We will be taking message and subject for mail through text files )
-        6. Repeat step ```b``` and create an variable ```ctrl+k``` and name it ```Message```
-        7. Drag an ```Read text file``` activity and set input file path as ```Message``` variable and create an output argument ```ctrl+m``` naming ```out_Message```
-        8. Repeat step 5,6 & 7 for Subject of our mail, with variable as ```Subject``` and argument as ```out_Subject```.
-        
-       Don't forget to set the Direction of ```out_Message```,```out_Subject``` and ```out_dt_MailData``` as Out in Arguments Panel and thus we are all set with our Initial Settings and can move on to Get Transaction State.
-   * After the above process, save the ```InitAllApplications.xaml``` file and move back to position from where you opened it.
-   * An ```Import Arguments``` button would seem to be highlighted with ```orange color```, Click on it and create variables for each empty entry with similar name (using ctrl + k) such as ```Message```, ```MailData```, ```Subject``` and click on ```Ok```.
-   * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
-    
-  2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
+  * Since we are not using ```Orchestrator``` we can just use ```comment out``` activity to disable ```Orchestrator``` activity and ```kill all process```
+  * <u>InitAllApplications</u> ~> This workflow is utilized to add activities that are to be executed only once for the process, to work. In our process,
+    1. Drag an ```Message Box``` Activity with Text: ```"Select an Excel File"```
+    2. Drag an ```Select File``` activity and create its output variable in right panel using ```ctrl+k```, naming ```InputFile```.
+    3. Drag an ```read range``` activity (workbook) and set Workbook path as ```InputFile``` (press ctrl + spacebar) and create an output argument using ```ctrl +m``` and name it as ```out_dt_MailData``` also in the ```Arguments Panel``` set its Direction to ```Out```.
+    4. Set the Range of ```read range``` activity as ```""``` or blank.
+    5. Drag an ```Message Box``` activity again with text: ```Select an Message.txt file``` ( We will be taking message and subject for mail through text files )
+    6. Repeat step ```b``` and create an variable ```ctrl+k``` and name it ```Message```
+    7. Drag an ```Read text file``` activity and set input file path as ```Message``` variable and create an output argument ```ctrl+m``` naming ```out_Message```
+    8. Repeat step 5,6 & 7 for Subject of our mail, with variable as ```Subject``` and argument as ```out_Subject```.
+Don't forget to set the Direction of ```out_Message```,```out_Subject``` and ```out_dt_MailData``` as Out in Arguments Panel and thus we are all set with our Initial Settings and can move on to Get Transaction State.
+  * After the above process, save the ```InitAllApplications.xaml``` file and move back to position from where you opened it.
+  * An ```Import Arguments``` button would seem to be highlighted with ```orange color```, Click on it and create variables for each empty entry with similar name (using ctrl + k) such as ```Message```, ```MailData```, ```Subject``` and click on ```Ok```.
+  * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
+<br>
+2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
   </br>
    <img src="Images/ExcelData.png" />
-  </br><ul>
-  <li>To Get Started, Double click on ```Get Transaction Data``` State Machine and followed by Click on ```Open Workflow``` in ```Invoke GetTransactionData workflow```</li>
+  </br>
+  
+  * To Get Started, Double click on <mark>Get Transaction Data</mark> State Machine and followed by Click on ```Open Workflow``` in ```Invoke GetTransactionData workflow```
  </br>
    <img src="Images/Get Transaction Data.png" />
  </br>
- <ul>
-<li>While working try to read the Annotations given at top of the activities, they give a brief description about the activities being used</li>
-<li>Now back to process, since we are not using Orchestrator so we won't be in need of ```Get Transaction Item``` activity</li>
- </ul>
- <ol>
- <li>Drag an ```If``` activity and set condition as ```in_TransactionNumber < io_TransactionData.Rows.Count``` </br>
-       (Here in_TransactionNumber defines the index number of row and will loop until rows are left unprocessed)</li>
- <li>Drag an ```Assign``` activity inside the ```Then``` section and set To: ```out_TransactionItem``` , Value: ```io_TransactionData(in_TransactionNumber)``` with data type of ```out_TransactionItem``` as ```System.Data.DataRow```</li>
- <li>Drag 3 ```Assign``` activities inside the ```Else``` section and set them as
-  <ul>
-   <li>To: out_TransactionItem  ; Value: Nothing</li>
-   <li>To: out_TransactionField1 ; Value: ""</li>
-   <li>To: out_TransactionField2 ; Value: "" </li>
-  </ul>
-  (These activites will result to show end of process when transaction number will be equal or more than no of rows in excel)</li></br>
-    <img src="Images/TransactionItem.png" \></br>
-   <li>In the activity below it, set arguments to store the Name of person and email id at each iteration of row </br>
- <ul>
- <li>To: out_TransactionField1 ; Value: out_TransactionItem("Name").ToString</li>
- <li>To: out_TransactionField2 ; Value: out_TransactionItem("Email").ToString</li>
- <li>out_TransactionID is used for logging purpose so keep it as it is thus no change</li>
- </ul></li>
- </ol>
-    <img src="Images/TransactionField.png" \>
+ 
+  * While working try to read the Annotations given at top of the activities, they give a brief description about the activities being used
+  * Now back to process, since we are not using Orchestrator so we won't be in need of ```Get Transaction Item``` activity
+ 
+    1. Drag an If activity and set condition as ```in_TransactionNumber < io_TransactionData.Rows.Count``` </br>
+       (Here in_TransactionNumber defines the index number of row and will loop until rows are left unprocessed)
+    2. Drag an ```Assign``` activity inside the ```Then``` section and set To: ```out_TransactionItem``` , Value: ```io_TransactionData(in_TransactionNumber)``` with data type of ```out_TransactionItem``` as ```System.Data.DataRow```
+    3. Drag 3 ```Assign``` activities inside the ```Else``` section and set them as
+        <ul>
+         <li>To: out_TransactionItem  ; Value: Nothing</li>
+         <li>To: out_TransactionField1 ; Value: ""</li>
+         <li>To: out_TransactionField2 ; Value: "" </li>
+        </ul>
+        
+  (These activites will result to show end of process when transaction number will be equal or more than no of rows in excel)</br>
+  
+   <img src="Images/TransactionItem.png" />
+   </br>
+    4. In the activity below it, set arguments to store the Name of person and email id at each iteration of row
+        <ul>
+         <li>To: out_TransactionField1 ; Value: out_TransactionItem("Name").ToString</li>
+         <li>To: out_TransactionField2 ; Value: out_TransactionItem("Email").ToString</li>
+         <li>out_TransactionID is used for logging purpose so keep it as it is thus no change</li>
+        </ul><br>
+   <img src="Images/TransactionField.png" />
  
