@@ -1,0 +1,151 @@
+# ReFramework with Excel
+ 
+Hey guys!! So through this blog i will be sharing a use-case to learn, as how we can use ReFramework for building most of our projects with proper structure and exception handling
+
+## What is Re-Framework?
+* This Framework is a Template provided by UiPath for ```transactional``` activities or workflow
+* ReFramework consists of few pre-build workflows which are used to simplify the Automation Task in a proper manner
+* It can be used for multiple input types which just needs to be iterable, such as
+  1. List
+  2. Queue
+  3. Array
+  and many more.
+
+## When to Use?
+* It can be used in most of the projects
+* But the basic idea is, if you need to apply specific actions on every entry of a data set, then its the best option you have
+* It works through index based search and process
+
+Now without wasting any time, lets start with a UseCase and implement our own Bot
+
+<b><u>Idea</u></b> : Send Customized Bulk Mails to Peoples while fetching data from Excel File
+
+## Process :
+
+1. To Begin with, Open ```UiPath``` and Click on ```Robotic Enterprise Framework``` in the ```New From Template``` section
+2. Give a name to the Process ( up to you ) like ```Bulk mailing using ReFramework``` and a suitable Description can be added as for the ```Best Practices``` if we talk about
+
+... In few moments a pre-build template structure will be visible on screen with activities ( called State Machine ) like this <img src="Images/Re-Framework.jpg" />
+
+Before moving forward, lets talk about these activites also known as ```State Machine``` <br>
+* <b>State Machine</b> ~> A state machine is a type of automation that uses a finite number of states in its execution and an important aspect of state machines are transitions, as they also enable you to add conditions based on which to jump from one state to another. These are represented by arrows or branches between states.
+* Any Process consists of majorly 4 states:
+  1. Initialization
+  2. Get Transaction Data
+  3. Process
+  4. Exit
+1. Initialization ~> The state at which we initialize all the applications required in the process, or fetch the data need to be processed on.
+  * Init State (InitAllSettings.xaml) ~> An Config File is loaded into our Framework (as Config Dictionary Variable ```String:Object``` ), which is just an excel file which contains information related to logging status/File or Folder Path/Url/Credentials/Assets etc.. things which can be changed
+  <img src="Images/InitAllSetting.jpg" />
+  
+  * Since we are not using ```Orchestrator``` we can just use ```comment out``` activity to disable ```Orchestrator``` activity and ```kill all process```
+  * <u>InitAllApplications</u> ~> This workflow is utilized to add activities that are to be executed only once for the process, to work. In our process,
+    1. Drag an ```Message Box``` Activity with Text: ```"Select an Excel File"```
+    2. Drag an ```Select File``` activity and create its output variable in right panel using ```ctrl+k```, naming ```InputFile```.
+    3. Drag an ```read range``` activity (workbook) and set Workbook path as ```InputFile``` (press ctrl + spacebar) and create an output argument using ```ctrl +m``` and name it as ```out_dt_MailData``` also in the ```Arguments Panel``` set its Direction to ```Out```.
+    4. Set the Range of ```read range``` activity as ```""``` or blank.
+    5. Drag an ```Message Box``` activity again with text: ```Select an Message.txt file``` ( We will be taking message and subject for mail through text files )
+    6. Repeat step ```ii``` and create an variable ```ctrl+k``` and name it ```Message```
+    7. Drag an ```Read text file``` activity and set input file path as ```Message``` variable and create an output argument ```ctrl+m``` naming ```out_Message```
+    8. Repeat step 5,6 & 7 for Subject of our mail, with variable as ```Subject``` and argument as ```out_Subject```.
+Don't forget to set the Direction of ```out_Message```,```out_Subject``` and ```out_dt_MailData``` as Out in Arguments Panel and thus we are all set with our Initial Settings and can move on to Get Transaction State.
+  * After the above process, save the ```InitAllApplications.xaml``` file and move back to position from where you opened it.
+  * An ```Import Arguments``` button would seem to be highlighted with ```orange color```, Click on it and create variables for each empty entry with similar name (using ctrl + k) such as ```Message```, ```Subject``` and click on ```Ok```
+  * Set Argument for ```out_dt_MailData``` as ```TransactionData```
+  
+  <img src="Images/InitAllApplications.jpg" />
+  
+  * Now we are ready with initial settings and time to work on ```Get Transaction Data State```.
+
+2. Get Transaction Data ~> This state machine is where we work to get the data to do some process upon. In our case it will be the ```mail receiver's name``` and ```email id``` which we will fetch from columns named ```Name``` and ```Email```.
+  </br>
+   <img src="Images/ExcelData.png" />
+  </br>
+  
+  * To Get Started, Double click on <mark>Get Transaction Data</mark> State Machine and followed by Click on ```Open Workflow``` in ```Invoke GetTransactionData workflow```
+ </br>
+   <img src="Images/Get Transaction Data.png" />
+ </br>
+ 
+  * While working try to read the Annotations given at top of the activities, they give a brief description about the activities being used
+  * Now back to process, since we are not using Orchestrator so we won't be in need of ```Get Transaction Item``` activity
+ 
+    1. Drag an If activity and set condition as ```in_TransactionNumber < io_TransactionData.Rows.Count``` </br>
+       (Here in_TransactionNumber defines the index number of row and will loop until rows are left unprocessed)
+    2. Drag an ```Assign``` activity inside the ```Then``` section and set To: ```out_TransactionItem``` , Value: ```io_TransactionData(in_TransactionNumber)``` with data type of ```out_TransactionItem``` as ```System.Data.DataRow```
+    3. Drag 3 ```Assign``` activities inside the ```Else``` section and set them as
+        <ul>
+         <li>To: out_TransactionItem  ; Value: Nothing</li>
+         <li>To: out_TransactionField1 ; Value: ""</li>
+         <li>To: out_TransactionField2 ; Value: "" </li>
+        </ul>
+        
+  (These activites will result to show end of process when transaction number will be equal or more than no of rows in excel)</br>
+  
+   <img src="Images/TransactionItem.png" />
+   </br>
+    4. In the activity below it, set arguments to store the Name of person and email id at each iteration of row
+        <ul>
+         <li>To: out_TransactionField1 ; Value: out_TransactionItem("Name").ToString</li>
+         <li>To: out_TransactionField2 ; Value: out_TransactionItem("Email").ToString</li>
+         <li>out_TransactionID is used for logging purpose so keep it as it is thus no change</li>
+        </ul><br>
+   <img src="Images/TransactionField.png" />
+ 
+  And Now we are also complete with Get Transaction State machine and thus time to move forward with ```Process Transaction State Machine```
+
+3. Process Transaction ~> This Transaction or state machine is where the main process is made. In our case it will be sending mails to users. Lets go through the steps,
+  <img src="Images/Process_xaml.jpg" />
+  
+   * Click on the ```Open Workflow``` in ```Invoke Process Workflow``` activity
+   * You will notice an blank sequence, with no particular working activity which is like an empty canvas waiting to be painted by us.Thus
+      <ul>
+        <li> Open Arguments Panel and create 2 arguments, <b>in_TransactionField1</b> and <b>in_TransactionField2</b> with data type as <b>String</b> and direction <b>In</b></li>
+        <li> Create  two more arguments, <b>in_message</b> and <b>in_subject</b> with data type as <b>String</b> and direction <b>In</b></li>
+      </ul>
+      
+   * (optional) By pressing ```left shift + F2``` you can add an ```annotation``` for argument which describes the argument ~ Best Practice
+   * Change Data type of Transaction Item to ```System.Data.DataRow```
+   * Search for ```Send SMTP Mail Message``` activity and drag inside the sequence, if not found then go to ```Manage Packages``` ~> ```All Packages``` and download ```UiPath.Mail.Activities``` <br>
+  (This Activity is used to send mails through ```SMTP``` protocol of any mail server, we will be using gmail smtp server for our bot that is ```smtp.gmail.com``` having port number ```587```)
+   * Set the Following fields in properties panel as:
+     <ul>
+      <li> To: in_TransactionField2 </li>
+      <li> Subject : in_subject </li>
+      <li> Message : String.Format(in_message,in_TransactionField1)</li>
+      <li> Port : 587 </li>
+      <li> Server : "smtp.gmail.com"</li> 
+      <li> Email : "your-email-address"</li>
+      <li> Password : "your-password" </li>
+     </ul>
+    
+   * String.Format(String,Arg) ~> This is used to replace ```{0}``` with value in Arg.. similarly {1} can be replaced with another argument passed at same point
+   * Save and Open Mail file, Click on ```Import Arguments``` in ```Process.xaml``` file
+   * Set values as:
+     <ul>
+      <li> in_TransactionItem : TransactionItem </li>
+      <li> in_Config : Config </li>
+      <li> in_TransactionField1 : TransactionField1 </li>
+      <li> in_TransactionField2 : TransactionField2 </li>
+      <li> in_message : message </li>
+      <li> in_subject : subject </li>
+     </ul>
+     
+   (Variables created in the Initialization State)
+   
+   * Next open then Finally block, you will notice an blue exclamation symbol which shows that there is some error in workflow.Click on open workflow
+    <ul>
+      <li> In Arguments Panel, Set data type of <b>in_TransactionItem</b> to <b>System.Data.DataRow</b> </li>
+      <li> Save and Move back to Main File and just re-click on <b>Import Arguments</b> and <b>ok</b> that will remove the error of <b>data-type</b> </li>
+      <li> Delete all the Activities except <b>Increment Transaction Index</b> and connect it with <b>Start Activity</b></li>
+      <li> Since our process is simple, we won't need <b>Business Exception</b> or <b>System Exception</b> Error handling </li>
+      <li> Save the <b>XAML</b> file and close it. </li>
+     </ul>
+  <img src="Images/SetTransactionStatus.jpg" />
+  
+  4. Final Checks:
+    1. Set TransactionNumber to 0
+  And Hence we are Finished with our bot building process.
+  
+  Hope you might have learnt, the use of Re-Framework and a little bit of practice anyone can master it and make bots professionaly
+    
